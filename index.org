@@ -1,0 +1,114 @@
+#+TITLE: Weekly Presentation
+#+AUTHOR: Sounak Pradhan, Aditya Todi
+
+#+SETUPFILE: ../org-html-themes/setup/theme-readtheorg.setup
+
+* Introduction
+  Our project is =Experiment as a Service=, but for the time being we are
+  working on the =Vlabs Platform= for untethering content editing with content
+  serving.
+
+* Week-wise work
+** =Translators= Service
+   The =Translators= module is a micro-service part of the =Vlabs Platform=
+   design. The module works as a skeleton generator for an experiment. We
+   worked on the API which generates a Github repository with all the content in
+   markup file formats from a =JSON= specification file. It had another API
+   which creates a =.tar.gz= file which can be uploaded on /EdX Studio/ to
+   create an experiment successfully.
+
+*** Create Experiment from =JSON= spec
+**** URL
+     #+BEGIN_EXAMPLE
+     /create_experiment
+     #+END_EXAMPLE
+     
+**** Method
+     =POST=
+
+**** Payload
+     =JSON= Specification
+     #+BEGIN_EXAMPLE
+     {
+         "experiment" : {
+                      "id": "e99847",
+                      "name": "Parallel and distributed processing",
+                      "overview": "This deals with eiciting how parallel and distributed processing is done",
+                      "sections" : [
+                                 "Introduction",
+                                 "Objective",
+                                 "Tutorial",
+                                 "Illustration",
+                                 "Procedure",
+                                 "Experiment",
+                                 "Observations",
+                                 "Assignment",
+                                 "References"]},
+         "content-type": "org"
+     }
+     #+END_EXAMPLE
+
+*** Create OpenEdX structure from =JSON= spec
+**** URL
+     #+BEGIN_EXAMPLE
+     /create_openedx_lab
+     #+END_EXAMPLE
+
+**** Method
+     =POST=
+
+**** Payload
+     =JSON= Specification
+     #+BEGIN_EXAMPLE
+     {
+        "course": {"org": "IIIT-H","id": "CSE22", "display_name": "Artificial Neural Networks"},
+        "overview": "The objective of this lab is to provide hands-on experience in understanding the basics of ANN models, and the pattern recognition tasks they perform.",
+        "experiments": [{"id": "Intro", "name": "Introduction",
+                         "subsections": [{"name": "Introduction"}
+                                         ]},
+                         {"id": "E99847", "name": "Parallel and distributed processing - I: Interactive activation and competition models",
+                         "subsections": [{"name": "Objective"},
+                                         {"name": "Tutorial"},
+                                         {"name": "Illustration"},
+                                         {"name": "Procedure"},
+                                         {"name": "Experiment"},        
+                                         {"name": "Observations"},
+                                         {"name": "Assignment"},  
+                                         {"name": "References"} 
+                                         ]}
+                        ]
+     }
+     #+END_EXAMPLE
+
+** API in =LDS= for generating the resource maps for an experiment
+   The API that we created maps the resource ids to the experiment and has a
+   route =/map=. It returns =JSON= which has mappings of every section of the
+   experiment to its respective resource.
+
+*** URL
+    #+BEGIN_EXAMPLE
+    /map?expid=<expid>
+    #+END_EXAMPLE
+
+*** Method
+    =GET=
+
+** =Resource Generator= Micro-service
+   This micro-service has an API (currently only one) which takes the Github
+   repository created by the =/create_experiment= API of the =translator=
+   micro-service and converts the markup files into =html= files, thus creating
+   resources and saves those files in a temporary directory on the server.
+
+*** API for resource generation
+**** URL
+     #+BEGIN_EXAMPLE
+     /resource
+     #+END_EXAMPLE
+
+**** Method
+     =POST=
+
+**** Payload
+     #+BEGIN_EXAMPLE
+     'https://github.com/test-platform-to-to-deleted/Parallel-and-distributed-processing-e000121'
+     #+END_EXAMPLE
