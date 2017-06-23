@@ -112,3 +112,14 @@
      #+BEGIN_EXAMPLE
      'https://github.com/test-platform-to-to-deleted/Parallel-and-distributed-processing-e000121'
      #+END_EXAMPLE
+** Add =/update_experiment= API in the translator micro-service
+   Implemented the =/update_experiment= API and then later merged it with
+   =/create_experiment= which allows the author of the content to change the
+   sections.
+
+** Creating the structure for an existing experiment
+   We took the experiment /Numerical Approximation/ from the CSE lab and made a
+   structure of the experiment resources. And then build it in such a manner so
+   that it takes the form of an experiment and can be used to demonstrate the
+   simulation.
+   We are using =literate-tools= for building the org files into resource.
